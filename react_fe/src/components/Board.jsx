@@ -12,6 +12,23 @@ const Board = (props) => {
     getBoard().then((data) => setBoard(data))
   }, [])
 
+  useEffect(() => {
+    saveBoard()
+  }, [board])
+
+  const saveBoard = async () => {
+    const res = await fetch('/api/board', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(board)
+    })
+
+    const data = await res.json()
+    console.log(data);
+  }
+
   const getBoard = async () => {
     const res = await fetch('/api/board')
     const data = await res.json()
@@ -109,7 +126,7 @@ const Board = (props) => {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="flex flex-col sm:flex-row flex-wrap sm:space-x-2 space-y-2 sm:space-y-0 bg-gray-100 px-2 sm:px-8 py-6 rounded-xl w-full"
+              className="flex flex-col sm:flex-row flex-wrap gap-4 bg-gray-100 px-2 sm:px-8 py-6 rounded-xl w-full"
             >
               {board.columnOrder.map((columnId, index) => {
                 const column = board.columns[columnId]
