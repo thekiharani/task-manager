@@ -109,7 +109,7 @@ const Board = (props) => {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="flex flex-col sm:flex-row flex-wrap sm:space-x-2 space-y-2 bg-gray-100 px-2 sm:px-8 py-6 rounded-xl w-full"
+              className="flex flex-col sm:flex-row flex-wrap sm:space-x-2 space-y-2 sm:space-y-0 bg-gray-100 px-2 sm:px-8 py-6 rounded-xl w-full"
             >
               {board.columnOrder.map((columnId, index) => {
                 const column = board.columns[columnId]
@@ -127,6 +127,10 @@ const Board = (props) => {
                   />
                 )
               })}
+
+              {board.columnOrder.length < 1 && (
+                <div className="text-red-500">No boards here (:</div>
+              )}
 
               {provided.placeholder}
             </div>

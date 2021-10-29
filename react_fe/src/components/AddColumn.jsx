@@ -35,33 +35,54 @@ const AddColumn = (props) => {
         ...props.board.columns,
         [newColumnId]: newColumn,
       },
-      columnOrder: newColumnOrder
+      columnOrder: newColumnOrder,
     })
   }
 
+  const ResetData = () => {
+    setData((prev) => ({
+      ...prev,
+      showButton: !prev.showButton,
+      title: '',
+    }))
+  }
+
   const handleKeyPress = (e) => {
-    if (data.title === '') return
+    console.log(e.key);
+    if (e.keyCode === 2) {
+      ResetData()
+    }
+
     if (e.key === 'Enter') {
-      setData((prev) => ({
-        ...prev,
-        showButton: !prev.showButton,
-        title: '',
-      }))
+      if (data.title === '') return
       addNewColumn(data.title)
+      ResetData()
     }
   }
+
+  const handleKeyDown = (e) => {
+    if (e.keyCode === 27) {
+      ResetData()
+    }
+  }
+
+  const handleBlur = () => {
+    ResetData()
+  }
+
   return (
-    <div>
+    <div onKeyDown={handleKeyDown}>
       {data.showButton ? (
         <AddButton handleClick={handleClick}>
           <AddSvg />
-          <span>Column</span>
+          <span>Board</span>
         </AddButton>
       ) : (
         <TextInput
           value={data.title}
           onChange={handleTextChange}
           onKeyPress={handleKeyPress}
+          onBlur={handleBlur}
           placeholder="Column Name..."
         />
       )}

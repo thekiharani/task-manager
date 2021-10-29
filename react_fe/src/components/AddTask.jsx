@@ -45,16 +45,34 @@ const AddTask = (props) => {
     })
   }
 
+  const ResetData = () => {
+    setData((prev) => ({
+      ...prev,
+      showButton: !prev.showButton,
+      content: '',
+    }))
+  }
+  
+
   const handleKeyPress = (e) => {
-    if (data.content === '') return
-    if (e.key === 'Enter') {
-      setData((prev) => ({
-        ...prev,
-        showButton: !prev.showButton,
-        content: '',
-      }))
-      addNewTask(props.columnId, data.content)
+    if (e.keyCode === 27) {
+      ResetData()
     }
+    if (e.key === 'Enter') {
+      if (data.content === '') return
+      addNewTask(props.columnId, data.content)
+      ResetData()
+    }
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.keyCode === 27) {
+      ResetData()
+    }
+  }
+
+  const handleBlur = () => {
+    ResetData()
   }
 
   return (
@@ -69,6 +87,8 @@ const AddTask = (props) => {
           value={data.content}
           onChange={handleTextChange}
           onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
+          onBlur={handleBlur}
           placeholder="Task Name..."
         />
       )}

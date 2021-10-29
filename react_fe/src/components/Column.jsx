@@ -1,9 +1,35 @@
 import React from 'react'
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import AddTask from './AddTask'
+import { DeleteButton } from './Noria'
 import Task from './Task'
 
 const Column = (props) => {
+  const DeleteColumn = (columnId, index) => {
+    const columnTasks = props.board.columns[columnId].taskIds
+
+    const finalTasks = columnTasks.reduce((prev, current) => {
+      const { [current]: oldTask, ...newTasks } = prev
+      return newTasks
+    }, props.board.tasks)
+
+    const columns = props.board.columns
+    const { [columnId]: oldColumn, ...newColumns } = columns
+
+    const newColumnOrder = Array.from(props.board.columnOrder)
+    newColumnOrder.splice(index, 1)
+
+    props.setBoard({
+      tasks: {
+        ...finalTasks,
+      },
+      columns: {
+        ...newColumns,
+      },
+      columnOrder: newColumnOrder,
+    })
+  }
+
   return (
     <Draggable draggableId={props.column.id} index={props.index}>
       {(provided) => (
@@ -16,7 +42,12 @@ const Column = (props) => {
             {...provided.dragHandleProps}
             className="w-full text-center mb-2 hover:cursor-pointer"
           >
-            <h2 className="py-2 text-3xl font-bold">{props.column.title}</h2>
+            <div className="flex justify-between items-center">
+              <h2 className="py-2 text-3xl font-bold">{props.column.title}</h2>
+              <DeleteButton
+                onClick={() => DeleteColumn(props.column.id, props.index)}
+              />
+            </div>
             <hr className="bg-gray-300" />
           </div>
           <Droppable droppableId={props.column.id} type="task">
@@ -31,6 +62,8 @@ const Column = (props) => {
                     <Task
                       key={task.id}
                       task={task}
+                      board={props.board}
+                      setBoard={props.setBoard}
                       index={index}
                       columnId={props.column.id}
                     />
